@@ -1,0 +1,1 @@
+# For fixed sets of values such as payment status and booking status.
