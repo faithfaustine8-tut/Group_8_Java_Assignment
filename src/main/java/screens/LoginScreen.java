@@ -135,7 +135,7 @@ public class LoginScreen extends JPanel {
     private void setUpActions() {
         loginButton.addActionListener(event -> {
             // Authentication will be handled here through a service.
-            app.showScreen(Screens.NOW_SHOWING);
+            app.showScreen(Screens.DASHBOARD_SCREEN);
         });
     }
 
