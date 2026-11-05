@@ -1,81 +1,46 @@
 package models;
 
-public class Customer {
 
-    // Private fields (encapsulation)
-    private String customerId;
-    private String name;
-    private String email;
-    private String password;
+ // A customer who buys tickets at the counter. Customers do not log in,
+ 
+ 
+public class Customer extends User {
 
-    
-    public Customer(String customerId, String name, String email, String password) {
-        this.customerId = requireNonBlank(customerId, "Customer ID");
-        this.name = requireNonBlank(name, "Name");
-        this.email = requireValidEmail(email);
-        this.password = requireNonBlank(password, "Password");
+    private String phone;
+
+    public Customer(String customerId, String name, String phone) {
+        super(customerId, name);
+        this.phone = requireValidPhone(phone);
     }
 
-    // ---------- Getters ----------
-
+    /** Booking and other classes can use this name for the customer's ID. */
     public String getCustomerId() {
-        return customerId;
+        return getUserId();
     }
 
-    public String getName() {
-        return name;
+    public String getPhone() {
+        return phone;
     }
 
-    public String getEmail() {
-        return email;
+    public void setPhone(String phone) {
+        this.phone = requireValidPhone(phone);
     }
 
-        // ---------- Setters (with validation) ----------
-
-    public void setName(String name) {
-        this.name = requireNonBlank(name, "Name");
-    }
-
-    public void setEmail(String email) {
-        this.email = requireValidEmail(email);
-    }
-
-    public void setPassword(String password) {
-        this.password = requireNonBlank(password, "Password");
-    }
-
-    
-    public boolean checkPassword(String attempt) {
-        return password.equals(attempt);
-    }
-
-    
+    @Override
     public String getRole() {
         return "Customer";
     }
 
     @Override
     public String toString() {
-        // The password is NOT included on purpose.
-        return getRole() + "{id=" + customerId
-                + ", name=" + name
-                + ", email=" + email + "}";
+        return super.toString() + " [phone=" + phone + "]";
     }
 
-    // ---------- Validation helpers ----------
-
-    private static String requireNonBlank(String value, String fieldName) {
-        if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(fieldName + " must not be blank.");
-        }
-        return value.trim();
-    }
-
-    private static String requireValidEmail(String email) {
-        String cleaned = requireNonBlank(email, "Email");
-        // something@something.something, with no spaces and a single @
-        if (!cleaned.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-            throw new IllegalArgumentException("Email format is not valid: " + cleaned);
+    private static String requireValidPhone(String phone) {
+        String cleaned = requireNonBlank(phone, "Phone").replaceAll("[\\s-]", "");
+        // optional leading +, then 9 to 15 digits
+        if (!cleaned.matches("^\\+?[0-9]{9,15}$")) {
+            throw new IllegalArgumentException("Phone number is not valid: " + phone);
         }
         return cleaned;
     }

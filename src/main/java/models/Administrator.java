@@ -1,21 +1,38 @@
 package models;
 
 
-public class Administrator extends Customer {
+ //Movie, NowShowing and Theatre classes are available.
+ 
+public class Administrator extends User {
 
-    private String administratorId;
+    private String email;
+    private String password; // dummy data only in this assignment
 
-    public Administrator(String customerId, String name, String email,
-                         String password, String administratorId) {
-        super(customerId, name, email, password); // reuse Customer's validation
-        if (administratorId == null || administratorId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Administrator ID must not be blank.");
-        }
-        this.administratorId = administratorId.trim();
+    public Administrator(String adminId, String name, String email, String password) {
+        super(adminId, name);
+        this.email = requireValidEmail(email);
+        this.password = requireNonBlank(password, "Password");
     }
 
-    public String getAdministratorId() {
-        return administratorId;
+    public String getAdminId() {
+        return getUserId();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = requireValidEmail(email);
+    }
+
+    public void setPassword(String password) {
+        this.password = requireNonBlank(password, "Password");
+    }
+
+    // No getPassword(): other classes use checkPassword() instead.
+    public boolean checkPassword(String attempt) {
+        return password.equals(attempt);
     }
 
     @Override
@@ -25,7 +42,15 @@ public class Administrator extends Customer {
 
     @Override
     public String toString() {
-        // Reuses Customer's toString (which already hides the password)
-        return super.toString() + " [administratorId=" + administratorId + "]";
+        // password intentionally not included
+        return super.toString() + " [email=" + email + "]";
+    }
+
+    private static String requireValidEmail(String email) {
+        String cleaned = requireNonBlank(email, "Email");
+        if (!cleaned.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            throw new IllegalArgumentException("Email format is not valid: " + cleaned);
+        }
+        return cleaned;
     }
 }
