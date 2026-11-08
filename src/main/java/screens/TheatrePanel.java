@@ -1,10 +1,15 @@
 package screens;
 
 import models.Movie;
+import models.Screening;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 public class TheatrePanel extends JPanel {
     private static final Color MIDNIGHT = new Color(16, 24, 40);
@@ -12,14 +17,19 @@ public class TheatrePanel extends JPanel {
     private static final Color BORDER = new Color(55, 68, 91);
     private static final Color MUTED = new Color(166, 178, 197);
     private static final Color ACCENT = new Color(226, 55, 75);
+    private static final DateTimeFormatter SHOWTIME_FORMAT =
+            DateTimeFormatter.ofPattern("EEE, d MMM · h:mm a");
 
     private final Runnable backAction;
+    private final Consumer<Screening> screeningSelection;
     private final JLabel title = new JLabel();
     private final JLabel metadata = new JLabel();
     private final JLabel synopsis = new JLabel();
+    private final JPanel theatres = new JPanel(new GridLayout(1, 2, 16, 16));
 
-    public TheatrePanel(Runnable backAction) {
+    public TheatrePanel(Runnable backAction, Consumer<Screening> screeningSelection) {
         this.backAction = backAction;
+        this.screeningSelection = screeningSelection;
         setLayout(new BorderLayout());
         setBackground(MIDNIGHT);
         setBorder(new EmptyBorder(30, 34, 30, 34));
@@ -31,6 +41,13 @@ public class TheatrePanel extends JPanel {
         metadata.setText(movie.getGenre() + "  ·  " + movie.getAgeRating() + "  ·  "
                 + movie.getDurationMinutes() + " min  ·  " + movie.getShowingInfo());
         synopsis.setText("<html><div style='width:640px'>" + movie.getSynopsis() + "</div></html>");
+        theatres.removeAll();
+        theatres.add(createTheatreCard(movie, "Standard Theatre", "Standard · 120 seats",
+                new String[]{"12:30 PM", "3:45 PM", "7:00 PM"}, 18000));
+        theatres.add(createTheatreCard(movie, "Premium Theatre", "Premium · 84 seats",
+                new String[]{"1:15 PM", "4:30 PM", "8:15 PM"}, 28000));
+        theatres.revalidate();
+        theatres.repaint();
     }
 
     private JPanel createContent() {
@@ -94,18 +111,14 @@ public class TheatrePanel extends JPanel {
         heading.add(sectionTitle);
         heading.add(hint);
 
-        JPanel theatres = new JPanel(new GridLayout(0, 2, 16, 16));
         theatres.setOpaque(false);
-        theatres.add(createTheatreCard("Theatre 1", "Standard · 120 seats",
-                new String[]{"12:30 PM", "3:45 PM", "7:00 PM"}));
-        theatres.add(createTheatreCard("Theatre 2", "Premium · 84 seats",
-                new String[]{"1:15 PM", "4:30 PM", "8:15 PM"}));
         section.add(heading, BorderLayout.NORTH);
         section.add(theatres, BorderLayout.CENTER);
         return section;
     }
 
-    private JPanel createTheatreCard(String name, String details, String[] showtimes) {
+    private JPanel createTheatreCard(Movie movie, String name, String details,
+                                     String[] showtimes, int ticketPrice) {
         JPanel card = new JPanel();
         card.setBackground(PANEL);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -122,26 +135,44 @@ public class TheatrePanel extends JPanel {
         theatreDetails.setForeground(MUTED);
         theatreDetails.setBorder(new EmptyBorder(5, 0, 16, 0));
 
-        JPanel times = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        JLabel price = new JLabel("UGX " + String.format("%,d", ticketPrice) + " per ticket");
+        price.setFont(new Font("SansSerif", Font.BOLD, 12));
+        price.setForeground(new Color(244, 190, 83));
+        price.setBorder(new EmptyBorder(0, 0, 13, 0));
+
+        JPanel times = new JPanel(new GridLayout(0, 1, 0, 8));
         times.setOpaque(false);
         for (String showtime : showtimes) {
-            JLabel time = new JLabel(showtime);
-            time.setFont(new Font("SansSerif", Font.BOLD, 11));
+            LocalDateTime startTime = LocalDate.now().atTime(
+                    java.time.LocalTime.parse(showtime, DateTimeFormatter.ofPattern("h:mm a")));
+            Screening screening = new Screening(movie,
+                    name.startsWith("Standard") ? "Standard Theatre" : "Premium Theatre",
+                    startTime, ticketPrice, "Available");
+            JButton time = new JButton("<html><b>" + startTime.format(SHOWTIME_FORMAT)
+                    + "</b><br><span style='color:#a6b2c5'>" + screening.getAvailabilityStatus()
+                    + "</span></html>");
+            time.setHorizontalAlignment(SwingConstants.LEFT);
+            time.setFont(new Font("SansSerif", Font.PLAIN, 11));
             time.setForeground(Color.WHITE);
+            time.setBackground(new Color(30, 43, 65));
+            time.setFocusPainted(false);
             time.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(86, 101, 125)),
-                    new EmptyBorder(7, 9, 7, 9)
+                    new EmptyBorder(8, 10, 8, 10)
             ));
+            time.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            time.addActionListener(event -> screeningSelection.accept(screening));
             times.add(time);
         }
 
-        JLabel status = new JLabel("SCHEDULE PREVIEW");
+        JLabel status = new JLabel("SELECT A SHOWTIME TO CONTINUE");
         status.setFont(new Font("SansSerif", Font.BOLD, 9));
         status.setForeground(ACCENT);
         status.setBorder(new EmptyBorder(16, 0, 0, 0));
 
         card.add(theatreName);
         card.add(theatreDetails);
+        card.add(price);
         card.add(times);
         card.add(status);
         return card;

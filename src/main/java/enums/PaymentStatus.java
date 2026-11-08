@@ -2,6 +2,6 @@ package enums;
 
 public enum PaymentStatus {
     PENDING,
-    SUCCESFUL,
+    SUCCESSFUL,
     FAILED
 }

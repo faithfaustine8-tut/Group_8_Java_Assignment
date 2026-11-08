@@ -2,7 +2,9 @@ package screens;
 
 import app.Application;
 import enums.Screens;
+import models.BookingSelection;
 import models.Movie;
+import models.Screening;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,13 +18,19 @@ public class DashboardScreen extends JPanel {
     private static final Color GOLD = new Color(244, 190, 83);
     private static final String NOW_SHOWING = "now-showing";
     private static final String THEATRE = "theatre";
+    private static final String BOOKING = "booking";
+    private static final String PAYMENTS = "payments";
 
     private final CardLayout contentLayout = new CardLayout();
     private final JPanel contentPanel = new JPanel(contentLayout);
     private final JButton nowShowingButton = createNavigationButton("Now Showing");
     private final JButton bookingsButton = createNavigationButton("Bookings");
     private final JButton paymentsButton = createNavigationButton("Payments");
-    private final TheatrePanel theatrePanel = new TheatrePanel(this::showNowShowing);
+    private final TheatrePanel theatrePanel = new TheatrePanel(this::showNowShowing, this::showScreening);
+    private final BookingPanel bookingPanel = new BookingPanel(this::showPayments, this::showTheatre);
+    private final PaymentsPanel paymentsPanel = new PaymentsPanel(this::finishPayment, this::showBooking);
+    private Screening currentScreening;
+    private BookingSelection currentBooking;
 
     public DashboardScreen(Application app) {
         setLayout(new BorderLayout());
@@ -68,11 +76,24 @@ public class DashboardScreen extends JPanel {
         top.add(Box.createVerticalStrut(6));
         top.add(paymentsButton);
 
-        bookingsButton.setEnabled(false);
-        paymentsButton.setEnabled(false);
-        bookingsButton.setToolTipText("Bookings navigation will be available soon");
-        paymentsButton.setToolTipText("Payments navigation will be available soon");
         nowShowingButton.addActionListener(event -> showNowShowing());
+        bookingsButton.addActionListener(event -> {
+            if (currentScreening == null) {
+                JOptionPane.showMessageDialog(this, "Select a movie and screening first.",
+                        "No screening selected", JOptionPane.INFORMATION_MESSAGE);
+                showNowShowing();
+                return;
+            }
+            showBooking();
+        });
+        paymentsButton.addActionListener(event -> {
+            if (currentBooking == null) {
+                JOptionPane.showMessageDialog(this, "Select seats and proceed from Booking first.",
+                        "No tickets selected", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            showPayments(currentBooking);
+        });
 
         JButton logoutButton = createNavigationButton("Logout");
         logoutButton.setForeground(new Color(242, 151, 162));
@@ -93,28 +114,63 @@ public class DashboardScreen extends JPanel {
         contentPanel.setBackground(MIDNIGHT);
         contentPanel.add(nowShowingPanel, NOW_SHOWING);
         contentPanel.add(theatrePanel, THEATRE);
+        contentPanel.add(bookingPanel, BOOKING);
+        contentPanel.add(paymentsPanel, PAYMENTS);
         return contentPanel;
     }
 
     private void showMovie(Movie movie) {
         theatrePanel.setMovie(movie);
         contentLayout.show(contentPanel, THEATRE);
-        updateNavigationState(false);
+        updateNavigationState(null);
+    }
+
+    private void showScreening(Screening screening) {
+        currentScreening = screening;
+        currentBooking = null;
+        bookingPanel.setScreening(screening);
+        contentLayout.show(contentPanel, BOOKING);
+        updateNavigationState(bookingsButton);
+    }
+
+    private void showBooking() {
+        contentLayout.show(contentPanel, BOOKING);
+        updateNavigationState(bookingsButton);
+    }
+
+    private void showPayments(BookingSelection booking) {
+        currentBooking = booking;
+        paymentsPanel.setBooking(booking);
+        contentLayout.show(contentPanel, PAYMENTS);
+        updateNavigationState(paymentsButton);
+    }
+
+    private void showTheatre() {
+        contentLayout.show(contentPanel, THEATRE);
+        updateNavigationState(null);
+    }
+
+    private void finishPayment() {
+        currentBooking = null;
+        currentScreening = null;
+        showNowShowing();
     }
 
     private void showNowShowing() {
         contentLayout.show(contentPanel, NOW_SHOWING);
-        updateNavigationState(true);
+        updateNavigationState(nowShowingButton);
     }
 
-    private void updateNavigationState(boolean showingMovies) {
-        nowShowingButton.setBackground(showingMovies ? new Color(39, 49, 69) : SIDEBAR);
-        nowShowingButton.setForeground(showingMovies ? Color.WHITE : MUTED);
-        nowShowingButton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 3, 0, 0,
-                        showingMovies ? ACCENT : SIDEBAR),
-                new EmptyBorder(12, 13, 12, 10)
-        ));
+    private void updateNavigationState(JButton activeButton) {
+        for (JButton button : new JButton[]{nowShowingButton, bookingsButton, paymentsButton}) {
+            boolean active = button == activeButton;
+            button.setBackground(active ? new Color(39, 49, 69) : SIDEBAR);
+            button.setForeground(active ? Color.WHITE : MUTED);
+            button.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 3, 0, 0, active ? ACCENT : SIDEBAR),
+                    new EmptyBorder(12, 13, 12, 10)
+            ));
+        }
     }
 
     private JButton createNavigationButton(String text) {
