@@ -1,55 +1,73 @@
 package models;
+package models;
 
-public class Movie {
-    private final String title;
-    private final String genre;
-    private final String ageRating;
-    private final int durationMinutes;
-    private final String showingInfo;
-    private final String synopsis;
-    private final String posterPath;
+import java.time.Duration;
+import java.time.LocalDate;
 
-    public Movie(String title, String genre, String ageRating, int durationMinutes,
-                 String showingInfo, String synopsis) {
-        this(title, genre, ageRating, durationMinutes, showingInfo, synopsis, null);
-    }
 
-    public Movie(String title, String genre, String ageRating, int durationMinutes,
-                 String showingInfo, String synopsis, String posterPath) {
-        this.title = title;
-        this.genre = genre;
-        this.ageRating = ageRating;
-        this.durationMinutes = durationMinutes;
-        this.showingInfo = showingInfo;
-        this.synopsis = synopsis;
-        this.posterPath = posterPath;
-    }
+ class Movie {
+    
+   private String title; // Movie title
+   private double cost; // Base ticket cost
+   private String rating; //Content rating
+   private LocalDate releaseDate; //Release date
+   private Duration duration; //Runtime
+   private String synopsis; // Short description
+   private String genre; //Movie genre
+   private String posterFileName; //Local poster image
 
-    public String getTitle() {
-        return title;
-    }
+public Movie (String title, double cost, String rating, LocalDate releaseDate, Duration duration, String synopsis, String genre, String posterFileName) {
+  validateString (title, "Title");
+  validateString (rating, "Rating");
+  validateString (synopsis, "Synopsis");
+  validateString (genre, "Genre");
+  validateString (posterFileName, "Poster filename");
 
-    public String getGenre() {
-        return genre;
-    }
+  if (cost < 0) {
+    throw new IllegalArgumentException ("Base ticket cost cannot be negative");
+  }
+  if (releaseDate == null) {
+    throw new IllegalArgumentException("Release date cannot be null");
+  }
+  if(duration == null || duration.isNegative () || duration.isZero() ) {
+    throw new IllegalArgumentException("Duration must be a positive time frame");
+  }
 
-    public String getAgeRating() {
-        return ageRating;
-    }
-
-    public int getDurationMinutes() {
-        return durationMinutes;
-    }
-
-    public String getShowingInfo() {
-        return showingInfo;
-    }
-
-    public String getSynopsis() {
-        return synopsis;
-    }
-
-    public String getPosterPath() {
-        return posterPath;
-    }
+  this.title = title;
+  this.cost = cost;
+  this.rating = rating;
+  this.releaseDate = releaseDate;
+  this.duration = duration;
+  this.synopsis = synopsis;
+  this.genre = genre;
+  this.posterFileName = posterFileName;
 }
+
+public String getTitle() {return title;}
+public double getCost() {return cost;}
+public String getRating() {return rating;}
+public LocalDate getReleaseDate() {return releaseDate;}
+public Duration getDuration() {return duration;}
+public String getSynopsis() {return synopsis;}
+public String getGenre() {return genre;}
+public String getPosterFileName() {return posterFileName;}
+
+
+public void setCost(double cost) {
+  if (cost < 0) throw new IllegalArgumentException("Cost cannot be negative");
+  this.cost = cost;
+}
+
+private void validateString(String value, String fieldName) {
+  if (value == null || value.strip().isEmpty()) {
+    throw new IllegalArgumentException(fieldName + "cannot be blank");
+  }
+}
+
+@Override 
+public String toString () {
+  return String.format("Movie: %s(%s) | Genre: %s | Duration: %d mins | Price: $%.2f", title, rating, genre, duration.toMinutes(), cost);
+}
+
+}
+
