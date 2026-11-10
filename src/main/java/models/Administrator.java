@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+
 public class Administrator extends User {
 
     /** Fixed ticket price in UGX for every showing. */
@@ -55,6 +57,22 @@ public class Administrator extends User {
     }
 
     /**
+     * Looks up a movie by title, ignoring case.
+     * Returns the movie, or null if there is no movie with that title.
+     */
+    public Movie findMovieByTitle(List<Movie> movies, String title) {
+        Objects.requireNonNull(movies, "Movie list cannot be null");
+        String wanted = requireNonBlank(title, "Title");
+
+        for (Movie m : movies) {
+            if (m.getTitle().equalsIgnoreCase(wanted)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Removes the movie with the given title.
      * Returns true if it was found and removed, false if there is no such movie.
      * Refuses (IllegalStateException) if the movie still has upcoming showings.
@@ -64,13 +82,7 @@ public class Administrator extends User {
         Objects.requireNonNull(showings, "Showing list cannot be null");
         String wanted = requireNonBlank(title, "Title");
 
-        Movie found = null;
-        for (Movie m : movies) {
-            if (m.getTitle().equalsIgnoreCase(wanted)) {
-                found = m;
-                break;
-            }
-        }
+        Movie found = findMovieByTitle(movies, wanted);
         if (found == null) {
             return false;
         }
