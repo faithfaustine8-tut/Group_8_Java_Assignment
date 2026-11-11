@@ -1,5 +1,4 @@
 package models;
-package models;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -8,7 +7,6 @@ import java.time.LocalDate;
  class Movie {
     
    private String title; // Movie title
-   private double cost; // Base ticket cost
    private String rating; //Content rating
    private LocalDate releaseDate; //Release date
    private Duration duration; //Runtime
@@ -34,7 +32,6 @@ public Movie (String title, double cost, String rating, LocalDate releaseDate, D
   }
 
   this.title = title;
-  this.cost = cost;
   this.rating = rating;
   this.releaseDate = releaseDate;
   this.duration = duration;
@@ -44,7 +41,6 @@ public Movie (String title, double cost, String rating, LocalDate releaseDate, D
 }
 
 public String getTitle() {return title;}
-public double getCost() {return cost;}
 public String getRating() {return rating;}
 public LocalDate getReleaseDate() {return releaseDate;}
 public Duration getDuration() {return duration;}
@@ -55,7 +51,6 @@ public String getPosterFileName() {return posterFileName;}
 
 public void setCost(double cost) {
   if (cost < 0) throw new IllegalArgumentException("Cost cannot be negative");
-  this.cost = cost;
 }
 
 private void validateString(String value, String fieldName) {
@@ -66,7 +61,7 @@ private void validateString(String value, String fieldName) {
 
 @Override 
 public String toString () {
-  return String.format("Movie: %s(%s) | Genre: %s | Duration: %d mins | Price: $%.2f", title, rating, genre, duration.toMinutes(), cost);
+  return String.format("Movie: %s(%s) | Genre: %s | Duration: %d mins | Price: $%.2f", title, rating, genre, duration.toMinutes());
 }
 
 }
