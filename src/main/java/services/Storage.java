@@ -38,12 +38,13 @@ public class Storage {
     public static Movie[] movies = {
 
         new Movie(
-            "Avatar",
+            "Avatar | Fire And Ash",
             "Science Fiction",
             "PG-13",
             162,
             "Daily at 2:00 PM",
-            "A journey through the world of Pandora."
+            "A journey through the world of Pandora.",
+            "assets/avatar-fire-and-ash.jpeg"
         ),
 
         new Movie(
@@ -52,7 +53,8 @@ public class Storage {
             "PG-13",
             195,
             "Daily at 4:00 PM",
-            "A romantic story aboard a famous ship."
+            "A romantic story aboard a famous ship.",
+            "assets/titanic.jpeg"
         ),
 
         new Movie(
@@ -61,11 +63,12 @@ public class Storage {
             "PG-13",
             143,
             "Daily at 6:00 PM",
-            "Heroes come together to save the world."
+            "Heroes come together to save the world.",
+            "assets/the-avengers.jpeg"
         ),
 
         new Movie(
-            "Spider-Man",
+            "Spider-Man | Brand New Day",
             "Action",
             "PG-13",
             121,
@@ -75,12 +78,13 @@ public class Storage {
         ),
 
         new Movie(
-            "Black Panther",
+            "Dune 3",
             "Action",
             "PG-13",
             134,
             "Daily at 10:00 AM",
-            "A king protects the nation of Wakanda."
+            "A journey through the desert planet of Arrakis.",
+            "assets/dune3.jpg"
         ),
 
         new Movie(
@@ -89,7 +93,8 @@ public class Storage {
             "PG",
             102,
             "Daily at 12:00 PM",
-            "Two sisters discover the power of love."
+            "Two sisters discover the power of love.",
+            "assets/frozen.jpeg"
         ),
 
         new Movie(
@@ -98,7 +103,8 @@ public class Storage {
             "PG-13",
             148,
             "Daily at 9:00 PM",
-            "A team enters people's dreams."
+            "A team enters people's dreams.",
+            "assets/inception.jpg"
         )
     };
 
