@@ -14,17 +14,49 @@ public class Movie {
     private final String posterFileName;
     private final String showingInfo;
 
-    public Movie(String title, double cost, String rating, LocalDate releaseDate,
-                 Duration duration, String synopsis, String genre, String posterFileName) {
-        this(title, cost, rating, requireReleaseDate(releaseDate), duration, synopsis, genre,
-                requireString(posterFileName, "Poster filename"), "");
-    }
+ class Movie {
+    
+   private String title; // Movie title
+   private String rating; //Content rating
+   private LocalDate releaseDate; //Release date
+   private Duration duration; //Runtime
+   private String synopsis; // Short description
+   private String genre; //Movie genre
+   private String posterFileName; //Local poster image
 
-    public Movie(String title, String genre, String rating, int durationMinutes,
-                 String showingInfo, String synopsis, String posterFileName) {
-        this(title, 0, rating, null, Duration.ofMinutes(durationMinutes), synopsis, genre,
-                requireString(posterFileName, "Poster filename"), requireString(showingInfo, "Showing info"));
-    }
+public Movie (String title, double cost, String rating, LocalDate releaseDate, Duration duration, String synopsis, String genre, String posterFileName) {
+  validateString (title, "Title");
+  validateString (rating, "Rating");
+  validateString (synopsis, "Synopsis");
+  validateString (genre, "Genre");
+  validateString (posterFileName, "Poster filename");
+
+  if (cost < 0) {
+    throw new IllegalArgumentException ("Base ticket cost cannot be negative");
+  }
+  if (releaseDate == null) {
+    throw new IllegalArgumentException("Release date cannot be null");
+  }
+  if(duration == null || duration.isNegative () || duration.isZero() ) {
+    throw new IllegalArgumentException("Duration must be a positive time frame");
+  }
+
+  this.title = title;
+  this.rating = rating;
+  this.releaseDate = releaseDate;
+  this.duration = duration;
+  this.synopsis = synopsis;
+  this.genre = genre;
+  this.posterFileName = posterFileName;
+}
+
+public String getTitle() {return title;}
+public String getRating() {return rating;}
+public LocalDate getReleaseDate() {return releaseDate;}
+public Duration getDuration() {return duration;}
+public String getSynopsis() {return synopsis;}
+public String getGenre() {return genre;}
+public String getPosterFileName() {return posterFileName;}
 
     public Movie(String title, String genre, String rating, int durationMinutes,
                  String showingInfo, String synopsis) {
@@ -32,20 +64,9 @@ public class Movie {
                 null, requireString(showingInfo, "Showing info"));
     }
 
-    private Movie(String title, double cost, String rating, LocalDate releaseDate,
-                  Duration duration, String synopsis, String genre, String posterFileName,
-                  String showingInfo) {
-        validateString(title, "Title");
-        validateString(rating, "Rating");
-        validateString(synopsis, "Synopsis");
-        validateString(genre, "Genre");
-        if (showingInfo == null) {
-            throw new IllegalArgumentException("Showing info cannot be null");
-        }
-        validateCost(cost);
-        if (duration == null || duration.isNegative() || duration.isZero()) {
-            throw new IllegalArgumentException("Duration must be a positive time frame");
-        }
+public void setCost(double cost) {
+  if (cost < 0) throw new IllegalArgumentException("Cost cannot be negative");
+}
 
         this.title = title;
         this.cost = cost;
@@ -58,9 +79,10 @@ public class Movie {
         this.showingInfo = showingInfo;
     }
 
-    public String getTitle() {
-        return title;
-    }
+@Override 
+public String toString () {
+  return String.format("Movie: %s(%s) | Genre: %s | Duration: %d mins | Price: $%.2f", title, rating, genre, duration.toMinutes());
+}
 
     public double getCost() {
         return cost;
