@@ -2,6 +2,7 @@ package screens;
 
 import app.Application;
 import enums.Screens;
+import services.AuthenticationService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -133,12 +134,21 @@ public class LoginScreen extends JPanel {
     }
 
     private void setUpActions() {
-        loginButton.addActionListener(event -> {
-            // Authentication will be handled here through a service.
-            app.showScreen(Screens.DASHBOARD_SCREEN);
-        });
-    }
 
+    loginButton.addActionListener(event -> {
+
+        int successCode = AuthenticationService.loginAuth(
+            usernameField,
+            passwordField,
+            usernameLabel,
+            passwordLabel
+        );
+
+        if (successCode == 1) {
+            app.showScreen(Screens.DASHBOARD_SCREEN);
+        }
+    });
+}
     private JLabel createBackgroundLoginImage(ImageIcon loginImage) {
         return new JLabel() {
             @Override
