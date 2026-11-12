@@ -1,10 +1,9 @@
 package models;
 
-
 import java.util.List;
 import java.util.ArrayList;
 
-class Theatre
+public class Theatre
  {
   private  String name; // Audtorium name
   private String location; //Location

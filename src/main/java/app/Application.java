@@ -1,8 +1,8 @@
 package app;
 
 import enums.Screens;
+import screens.DashboardScreen;
 import screens.LoginScreen;
-import screens.NowShowingScreen;
 
 import javax.swing.*;
 import java.awt.CardLayout;
@@ -21,11 +21,12 @@ public class Application {
             mainPanel = new JPanel(cardLayout);
 
             registerScreen(Screens.LOGIN_SCREEN, new LoginScreen(this));
-            registerScreen(Screens.NOW_SHOWING, new NowShowingScreen(this));
+            registerScreen(Screens.DASHBOARD_SCREEN, new DashboardScreen(this));
 
             JFrame frame = new JFrame("Multiplex Naalya");
             frame.setContentPane(mainPanel);
-            frame.setSize(1000, 600);
+            frame.setSize(1280, 820);
+            frame.setMinimumSize(new java.awt.Dimension(900, 640));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
 

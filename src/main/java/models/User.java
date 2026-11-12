@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Objects;
 
 public abstract class User {
 
@@ -25,6 +26,25 @@ public abstract class User {
 
     /** Each subclass must say what kind of user it is. */
     public abstract String getRole();
+
+    /** Two users are equal when they are the same kind of user with the same ID. */
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        User that = (User) other;
+        return userId.equals(that.userId);
+    }
+
+    /** Must be consistent with equals(): equal users have the same hash code. */
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
+    }
 
     @Override
     public String toString() {
