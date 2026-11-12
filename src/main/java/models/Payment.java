@@ -6,12 +6,12 @@ import enums.PaymentStatus;
 public class Payment {
 
     // Attributes
-    private String paymentId;
-    private Booking booking;
-    private double amount;
-    private LocalDateTime paymentDate;
+    private final String paymentId;
+    private final Booking booking;
+    private final double amount;
+    private final LocalDateTime paymentDate;
     private PaymentStatus status;
-    private String paymentMethod;
+    private final String paymentMethod;
 
     // Constructor
     public Payment(String paymentId, Booking booking,

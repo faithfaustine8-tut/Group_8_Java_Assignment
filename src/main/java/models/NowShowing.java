@@ -6,7 +6,8 @@ import java.util.Objects;
 public class NowShowing {
 
     
-    private Movie movie;
+    private Movie movie;  // Composition
+    public String name;
     private Theatre theatre;
     private LocalDateTime showingTime;
     private double ticketPrice;

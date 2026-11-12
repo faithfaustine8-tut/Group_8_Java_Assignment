@@ -2,6 +2,7 @@ package screens;
 
 import app.Application;
 import enums.Screens;
+import services.AuthenticationService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,8 @@ public class LoginScreen extends JPanel {
     private final JPasswordField passwordField;
     private final JButton loginButton;
     private final JLabel backgroundLabel;
+    JLabel usernameLabel;
+    JLabel passwordLabel;
 
     public LoginScreen(Application app) {
         this.app = app;
@@ -66,8 +69,8 @@ public class LoginScreen extends JPanel {
         intro.setForeground(muted);
         intro.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel usernameLabel = new JLabel("USERNAME");
-        JLabel passwordLabel = new JLabel("PASSWORD");
+        usernameLabel = new JLabel("USERNAME");
+        passwordLabel = new JLabel("PASSWORD");
         for (JLabel label : new JLabel[]{usernameLabel, passwordLabel}) {
             label.setFont(new Font("SansSerif", Font.BOLD, 11));
             label.setForeground(muted);
@@ -135,7 +138,10 @@ public class LoginScreen extends JPanel {
     private void setUpActions() {
         loginButton.addActionListener(event -> {
             // Authentication will be handled here through a service.
-            app.showScreen(Screens.DASHBOARD_SCREEN);
+            int successCode = AuthenticationService.loginAuth(usernameField, passwordField, usernameLabel, passwordLabel);
+            if (successCode == 1) {
+                app.showScreen(Screens.DASHBOARD_SCREEN);
+            }
         });
     }
 
