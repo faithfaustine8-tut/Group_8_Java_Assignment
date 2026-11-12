@@ -80,7 +80,7 @@ The project will demonstrate the following concepts:
 
 ## 6. Project Structure
 
-The project will follow a modular package structure to separate different application responsibilities.
+The project uses a modular package structure to separate application responsibilities.
 
 ```text
 movie-ticketing-system/
@@ -99,15 +99,25 @@ movie-ticketing-system/
 │           │   ├── Administrator.java
 │           │   ├── Theatre.java
 │           │   ├── NowShowing.java
-│           │   ├── Booking.java
-│           │   └── Payment.java
+│           │   ├── Screening.java
+│           │   ├── BookingSelection.java
+│           │   ├── LoginAccount.java
+│           │   └── IssuedTicket.java
 │           │
 │           ├── screens/
 │           │   ├── LoginScreen.java
-│           │   ├── NowShowingScreen.java
-│           │   └── PaymentsScreen.java
+│           │   ├── DashboardScreen.java
+│           │   ├── NowShowingPanel.java
+│           │   ├── TheatrePanel.java
+│           │   ├── BookingPanel.java
+│           │   ├── PaymentsPanel.java
+│           │   └── IssuedTicketsPanel.java
 │           │
 │           ├── services/
+│           │   ├── AuthenticationService.java
+│           │   ├── ShowingCleanupService.java
+│           │   ├── Storage.java
+│           │   └── UserDatabase.java
 │           │
 │           └── enums/
 │
