@@ -2,12 +2,18 @@ package models;
 
 public class LoginAccount {
 
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
+    private final String fullName;
 
     public LoginAccount(String username, String password) {
+        this(username, password, username);
+    }
+
+    public LoginAccount(String username, String password, String fullName) {
         this.username = username;
         this.password = password;
+        this.fullName = fullName;
     }
 
     public String getUsername() {
@@ -16,5 +22,9 @@ public class LoginAccount {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }

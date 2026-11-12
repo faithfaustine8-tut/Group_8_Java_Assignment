@@ -1,6 +1,7 @@
 package screens;
 
 import models.Movie;
+import services.Storage;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -27,7 +27,7 @@ public class NowShowingPanel extends JPanel {
     private static final Color ACCENT = new Color(226, 55, 75);
 
     private final Consumer<Movie> movieSelection;
-    private final List<Movie> movies = createMovies();
+    private final List<Movie> movies = List.of(Storage.movies);
     private final JTextField searchField = new JTextField();
     private final JComboBox<String> genreFilter = new JComboBox<>();
     private final JComboBox<String> ratingFilter = new JComboBox<>();
@@ -259,34 +259,19 @@ public class NowShowingPanel extends JPanel {
         filter.setFont(new Font("SansSerif", Font.PLAIN, 12));
         filter.setForeground(Color.WHITE);
         filter.setBackground(PANEL);
+        filter.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus);
+                label.setBorder(new EmptyBorder(0, 10, 0, 8));
+                return label;
+            }
+        });
         filter.setPreferredSize(new Dimension(138, 42));
         filter.setBorder(BorderFactory.createLineBorder(BORDER));
         filter.setFocusable(false);
-    }
-
-    private List<Movie> createMovies() {
-        return Arrays.asList(
-                new Movie("After", "Drama", "13+", 108, "Today · 4 showtimes",
-                        "A moving story set beneath a distant sky.", "assets/after.jpg"),
-                new Movie("Archer", "Action", "16+", 112, "Today · 3 showtimes",
-                        "A survivor faces a dangerous fight to make it home.", "assets/archer.jpg"),
-                new Movie("Spider-Man: Brand New Day", "Action", "13+", 126, "Today · 2 showtimes",
-                        "A masked hero faces a new challenge in the city.", "assets/brand-new-day.jpg"),
-                new Movie("Dune 3", "Adventure", "PG", 98, "Today · 4 showtimes",
-                        "A young explorer discovers a remarkable world beyond the forest.", "assets/dune3.jpg"),
-                new Movie("Laugh Track", "Comedy", "13+", 101, "Today · 3 showtimes",
-                        "A small comedy club gets one last chance to make it big."),
-                new Movie("Deep Blue", "Drama", "PG", 119, "Today · 2 showtimes",
-                        "A coastal community comes together to protect its home."),
-                new Movie("Night Shift", "Thriller", "18+", 115, "Today · 3 showtimes",
-                        "One overnight shift turns into a test of nerve and trust."),
-                new Movie("Starlight Academy", "Family", "PG", 95, "Today · 5 showtimes",
-                        "A curious class learns that teamwork can change everything."),
-                new Movie("The Great Getaway", "Action", "13+", 122, "Today · 2 showtimes",
-                        "An unlikely team plans an escape with everything on the line."),
-                new Movie("Sunday at Home", "Family", "PG", 89, "Today · 3 showtimes",
-                        "A warm-hearted story about family, food and making time for each other.")
-        );
     }
 
     private static class PosterPanel extends JPanel {

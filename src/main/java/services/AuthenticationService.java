@@ -1,6 +1,5 @@
 package services;
 
-import data.UserDatabase;
 import models.LoginAccount;
 
 import javax.swing.JTextField;
@@ -14,9 +13,12 @@ public class AuthenticationService {
      * match an account in the user database.
      */
     public boolean authenticate(String username, String password) {
+        return authenticateAccount(username, password) != null;
+    }
 
+    public LoginAccount authenticateAccount(String username, String password) {
         if (username == null || password == null) {
-            return false;
+            return null;
         }
 
         // Check every account in the user database
@@ -25,12 +27,12 @@ public class AuthenticationService {
             if (account.getUsername().equalsIgnoreCase(username.trim())
                     && account.getPassword().equals(password)) {
 
-                return true;
+                return account;
             }
         }
 
         // No matching account was found
-        return false;
+        return null;
     }
 
     /**
@@ -54,11 +56,13 @@ public class AuthenticationService {
         // Check empty fields
         if (username.isEmpty()) {
             usernameLabel.setText("Username is required");
+            usernameLabel.setForeground(java.awt.Color.RED);
             return 0;
         }
 
         if (password.isEmpty()) {
             passwordLabel.setText("Password is required");
+            passwordLabel.setForeground(java.awt.Color.RED);
             return 0;
         }
 
@@ -69,7 +73,8 @@ public class AuthenticationService {
             return 1;
         }
 
-        passwordLabel.setText("Invalid username or password");
+        usernameLabel.setText("Invalid username or password");
+        usernameLabel.setForeground(java.awt.Color.RED);
         return 0;
     }
 }

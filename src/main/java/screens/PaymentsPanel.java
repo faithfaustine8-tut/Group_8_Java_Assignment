@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 public class PaymentsPanel extends JPanel {
     private static final Color MIDNIGHT = new Color(16, 24, 40);
@@ -23,6 +24,7 @@ public class PaymentsPanel extends JPanel {
 
     private final Runnable returnAction;
     private final Runnable backAction;
+    private final Consumer<BookingSelection> ticketIssueAction;
     private final CardLayout viewLayout = new CardLayout();
     private final JPanel views = new JPanel(viewLayout);
     private final JLabel movieValue = new JLabel();
@@ -39,10 +41,17 @@ public class PaymentsPanel extends JPanel {
     private final JRadioButton mtnButton = new JRadioButton("MTN Mobile Money");
     private final JLabel cashAmountValue = new JLabel();
     private BookingSelection booking;
+    private boolean ticketsIssued;
 
     public PaymentsPanel(Runnable returnAction, Runnable backAction) {
+        this(returnAction, backAction, booking -> { });
+    }
+
+    public PaymentsPanel(Runnable returnAction, Runnable backAction,
+                         Consumer<BookingSelection> ticketIssueAction) {
         this.returnAction = returnAction;
         this.backAction = backAction;
+        this.ticketIssueAction = ticketIssueAction;
         setLayout(new BorderLayout());
         setBackground(MIDNIGHT);
         setBorder(new EmptyBorder(25, 30, 25, 30));
@@ -54,6 +63,7 @@ public class PaymentsPanel extends JPanel {
 
     public void setBooking(BookingSelection booking) {
         this.booking = booking;
+        ticketsIssued = false;
         Screening screening = booking.getScreening();
         movieValue.setText(screening.getMovie().getTitle());
         theatreValue.setText(screening.getTheatreType());
@@ -211,6 +221,10 @@ public class PaymentsPanel extends JPanel {
         completeButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         completeButton.addActionListener(event -> {
             if (booking != null) {
+                if (!ticketsIssued) {
+                    ticketIssueAction.accept(booking);
+                    ticketsIssued = true;
+                }
                 viewLayout.show(views, CONFIRMATION_VIEW);
             }
         });

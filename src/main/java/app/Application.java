@@ -1,6 +1,7 @@
 package app;
 
 import enums.Screens;
+import models.LoginAccount;
 import screens.DashboardScreen;
 import screens.LoginScreen;
 
@@ -50,5 +51,11 @@ public class Application {
         }
 
         cardLayout.show(mainPanel, screen.name());
+    }
+
+    public void showDashboard(LoginAccount staffAccount) {
+        DashboardScreen dashboard = (DashboardScreen) screens.get(Screens.DASHBOARD_SCREEN);
+        dashboard.setStaffAccount(staffAccount);
+        showScreen(Screens.DASHBOARD_SCREEN);
     }
 }
