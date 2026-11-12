@@ -2,6 +2,7 @@ package screens;
 
 import app.Application;
 import enums.Screens;
+import models.LoginAccount;
 import services.AuthenticationService;
 
 import javax.swing.*;
@@ -147,7 +148,9 @@ public class LoginScreen extends JPanel {
         );
 
         if (successCode == 1) {
-            app.showScreen(Screens.DASHBOARD_SCREEN);
+            LoginAccount staffAccount = new AuthenticationService().authenticateAccount(
+                    usernameField.getText().trim(), new String(passwordField.getPassword()));
+            app.showDashboard(staffAccount);
         }
     });
 }

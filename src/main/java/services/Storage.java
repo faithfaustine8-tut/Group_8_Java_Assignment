@@ -1,8 +1,38 @@
 package services;
 
 import models.Movie;
+import models.BookingSelection;
+import models.IssuedTicket;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Storage {
+
+    private static final ArrayList<IssuedTicket> issuedTickets = new ArrayList<>();
+    private static int nextTicketNumber = 1;
+
+    public static synchronized List<IssuedTicket> getIssuedTickets() {
+        return List.copyOf(issuedTickets);
+    }
+
+    public static synchronized void issueTickets(BookingSelection booking, String tellerName) {
+        LocalDateTime issuedAt = LocalDateTime.now();
+        for (String seat : booking.getSeats()) {
+            IssuedTicket ticket = new IssuedTicket(
+                    String.format("TKT-%06d", nextTicketNumber++),
+                    booking.getScreening().getMovie().getTitle(),
+                    booking.getScreening().getTheatreType(),
+                    booking.getScreening().getStartTime(),
+                    seat,
+                    booking.getScreening().getTicketPrice(),
+                    tellerName,
+                    issuedAt
+            );
+            issuedTickets.add(ticket);
+        }
+    }
 
     // Array containing movies in the system
     public static Movie[] movies = {
@@ -40,7 +70,8 @@ public class Storage {
             "PG-13",
             121,
             "Daily at 8:00 PM",
-            "A young hero protects his city."
+            "A young hero protects his city.",
+            "assets/brand-new-day.jpg"
         ),
 
         new Movie(
